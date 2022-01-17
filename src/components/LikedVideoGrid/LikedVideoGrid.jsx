@@ -10,7 +10,7 @@ export default class LikedVideoGrid extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            videothumbnaildata: []
+            videothumbnaildata: [],
         }
 
     }
@@ -18,7 +18,7 @@ export default class LikedVideoGrid extends Component {
     componentDidMount = () => {
         console.log('test')
         console.log("hi from likedgrid")
-        axios.get("https://localhost:44313/api/Video/userwithvideo")
+        axios.get(`${"https://localhost:44313/api/Like/likeduserwithvideos/"}${userid}`)
             .then((response) => {
                 console.log("videodata")
                 this.setState({ videothumbnaildata: [...response.data] }, () => console.log(this.state))

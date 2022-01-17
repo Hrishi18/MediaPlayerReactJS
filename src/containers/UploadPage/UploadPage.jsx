@@ -2,6 +2,17 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './uploadPage.css';
 import { withRouter, useParams } from "react-router-dom";
+import upload from "../../assets/images/upload.svg";
+import ReactSession from 'react-client-session/dist/ReactSession';
+import { TextField, Button, Grid } from '@material-ui/core'
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import { styled } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+
+import Select from '@mui/material/Select';
 class UploadPage extends Component {
     constructor(props) {
         super(props);
@@ -9,7 +20,8 @@ class UploadPage extends Component {
             selectedFile: '',
             selectedThumbnail: '',
             status: '',
-            progress: 0
+            progress: 0,
+            category: ''
         }
     }
     selectFileHandler = (event) => {
@@ -67,12 +79,14 @@ class UploadPage extends Component {
         formData.append('Video.VideoDescription', document.getElementById("description").value);
 
         // 2. post the file to the WEB API
-
-        axios.post("http://localhost:31772/api/videos", formData, {
-            onUploadProgress: progressEvent => {
-                this.setState({
-                    progress: (progressEvent.loaded / progressEvent.total * 100)
-                })
+        axios({
+            method: 'post',
+            url: 'http://localhost:44313/api/videos',
+            data: formData,
+            config: {
+                headers: {
+                    'jwt': ReactSession.get("jwt")
+                }
             }
         })
             .then((response) => {
@@ -85,45 +99,134 @@ class UploadPage extends Component {
 
 
     }
+
+
     render() {
+
+        const ColoredLine = ({ color }) => (
+            <hr
+                style={{
+                    color: color,
+                    backgroundColor: color,
+                    height: 5
+                }}
+            />
+        );
+        const handleChange = (event) => {
+            this.setState({ category: event.target.value });
+        };
+
+        const BootstrapInput = styled(InputBase)(({ theme }) => ({
+            'label + &': {
+                marginTop: theme.spacing(3),
+            },
+            '& .MuiInputBase-input': {
+                borderRadius: 4,
+                position: 'relative',
+                backgroundColor: theme.palette.background.paper,
+                border: '5px solid #ced4da',
+                fontSize: 16,
+
+                padding: '10px 26px 10px 12px',
+                transition: theme.transitions.create(['border-color', 'box-shadow']),
+                // Use the system font instead of the default Roboto font.
+                fontFamily: [
+                    '-apple-system',
+                    'BlinkMacSystemFont',
+                    '"Segoe UI"',
+                    'Roboto',
+                    '"Helvetica Neue"',
+                    'Arial',
+                    'sans-serif',
+                    '"Apple Color Emoji"',
+                    '"Segoe UI Emoji"',
+                    '"Segoe UI Symbol"',
+                ].join(','),
+                '&:focus': {
+                    borderRadius: 4,
+                    borderColor: '#80bdff',
+                    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+                },
+            },
+        }));
         return (
 
             <div className='upload-container'>
-                <h1 className='title'>Upload</h1>
-                <div className='uploadForm'>
-                    <div className='left'>
-                        <div id='video' className='file-upload-wrapper' data-text="Select your Video!">
-                            <input id='videofile' className='file-upload-field' type="file" onChange={this.selectFileHandler} />
-                        </div>
-                        <div id='thumbnail' className='file-upload-wrapper' data-text="Select your Image!">
-                            <input id='thubmnailfile' className='file-upload-field' type="file" onChange={this.selectThumbnailHandler} />
-                        </div>
-                        <div className='textbox'  >
+                <img src={upload} alt="uploadimg" className="uploadImg" />
+                <h1 className='title'>Upload Video</h1>
 
-                            <input id='title' className='' type="text" placeholder='Title' />
-                        </div>
-                        <div className='textbox'>
-                            <input id='tags' className='' type="text" placeholder='Tags' />
-                        </div>
-                        <hr />
-                    </div>
-                    <div className='right'>
+                <div className='uploadForm'>
+                    <Grid container spacing={2}>
+                        <Grid lg={6} xs={8}>
+                            <div id='video' className='file-upload-wrapper' data-text="Video">
+                                <input id='videofile' className='file-upload-field' type="file" onChange={this.selectFileHandler} />
+                            </div>
+                        </Grid>
+                        <Grid lg={6} xs={8}>
+
+                            <div id='thumbnail' className='file-upload-wrapper' data-text="Thumbnail">
+                                <input id='thubmnailfile' className='file-upload-field' type="file" onChange={this.selectThumbnailHandler} />
+                            </div>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid lg={12} xs={8}>
+                            <div className='textbox'  >
+
+                                <input id='title' className='' type="text" placeholder='Title' />
+                            </div>
+
+                        </Grid>
+
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid lg={11} xs={8}>
+                            <div className='textbox3'>
+                                <input id='tags' className='' type="text" placeholder='Tags' />
+                            </div>
+                        </Grid>
+                        <Grid lg={1} xs={8}>
+
+                            <Select className='cat'
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={this.state.category}
+                                label="Category"
+                                onChange={handleChange}
+                                input={<BootstrapInput />}
+                            >
+
+                                <MenuItem value={"food"}>Food</MenuItem>
+                                <MenuItem value={"animals"}>Animals</MenuItem>
+                                <MenuItem value={"vehicles"}>Vehicles</MenuItem>
+                                <MenuItem value={"kids"}>Kids</MenuItem>
+                                <MenuItem value={"educational"}>Educational</MenuItem>
+                                <MenuItem value={"entertainment"}>Entertainment</MenuItem>
+                            </Select>
+
+
+                        </Grid>
+                    </Grid>
+
+                    <Grid>
 
                         <div className='textbox1'>
-                            { //<input id='description' className='' type="textarea" placeholder='Description' />
-                            }
-                            <textarea style={{ resize: "none", border: "none" }} id="description" placeholder='Description' rows="10" cols="50"></textarea>
+
+                            <textarea style={{ resize: "none", border: "none" }} id="description" placeholder='Description' rows="4" cols="110"></textarea>
                         </div>
-                        <div>
-                            <button className='file-upload-btn' type="button" onClick={this.uploadHandler}>Upload</button></div>
-                        <hr />
-                    </div>
+                    </Grid>
+
+
+                    <div>
+                        <button className='file-upload-btn' type="button" onClick={this.uploadHandler}>Submit</button></div>
+                    <hr />
+                    <h2>Upload Progress: {this.state.progress}</h2>
+                    <br />
+                    <h2>{this.state.status}</h2>
                 </div>
 
 
-                <div>{this.state.progress}</div>
-                <br />
-                <div>{this.state.status}</div>
+
             </div>
         );
     }

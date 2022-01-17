@@ -18,7 +18,7 @@ export default class LibraryVideoGrid extends Component {
     componentDidMount = () => {
         console.log('test')
         console.log("hi from librarygrid")
-        axios.get("https://localhost:44313/api/Video/userwithvideo")
+        axios.get(`${"https://localhost:44313/api/Video/userwithuservideo/"}${userid}`)
             .then((response) => {
                 console.log("videodata")
                 this.setState({ videothumbnaildata: [...response.data] }, () => console.log(this.state))

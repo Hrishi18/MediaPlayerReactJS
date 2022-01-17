@@ -6,6 +6,8 @@ import './App.css';
 import HomePage from './containers/HomePage/HomePage'
 import UploadPage from './containers/UploadPage/UploadPage'
 import SearchPage from './containers/SearchPage/SearchPage'
+import LikedPage from './containers/LikedPage/LikedPage'
+import LibraryPage from './containers/LibraryPage/LibraryPage'
 import {
   BrowserRouter as Router,
   Switch,
@@ -28,20 +30,28 @@ class App extends React.Component {
           <Switch>
             <Route exact path='/' >
               <HomePage />
-
             </Route>
+
             <Route exact path='/watch/:id' >
               <WatchPage />
-
             </Route>
+
             <Route exact path='/Upload' >
               <UploadPage />
-
             </Route>
+
             <Route exact path='/SearchPage/:id' >
               <SearchPage />
-
             </Route>
+
+            <Route exact path='/LibraryPage' >
+              <LibraryPage />
+            </Route>
+
+            <Route exact path='/LikedPage' >
+              <LikedPage />
+            </Route>
+
           </Switch>
           </div>
           </div>

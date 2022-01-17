@@ -36,13 +36,13 @@ export default class SmallSidebar extends Component {
 					</Link>
 				</li>
 				<li>
-					<Link to='/' className="new_video" style={{ display: "block" }}>
+					<Link to='/LikedPage' className="new_video" style={{ display: "block" }}>
 						<i class="fas fa-thumbs-up"></i>
 						Liked Videos
 					</Link>
 				</li>
 				<li>
-					<Link to='/' className="new_video" style={{ display: "block" }}>
+					<Link to='/LibraryPage' className="new_video" style={{ display: "block" }}>
 						<i class="fas fa-file-video"></i>
 						Library
 					</Link>
