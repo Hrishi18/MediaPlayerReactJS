@@ -1,13 +1,17 @@
+
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import $ from 'jquery';
+import Popper from 'popper.js';
+import FileUploadComponent from './FileUploadComponent';
+import UploadFile from './uploadFile';
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+<App/>,
   document.getElementById('root')
 );
 

@@ -1,25 +1,57 @@
+import React from 'react';
 import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './App.css';
+import HomePage from './containers/HomePage/HomePage'
+import UploadPage from './containers/UploadPage/UploadPage'
+import SearchPage from './containers/SearchPage/SearchPage'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import WatchPage from './containers/WatchPage/WatchPage';
+import SmallSidebar from './components/SmallSidebar/SmallSidebar'
+import Header from './components/TestHeader/Header'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Router>
+        <Header />
+        <div className='below-navigation'>
+        <SmallSidebar/>
+        <div style={ {width : "95%", marginTop: "65px"}}>
+          <Switch>
+            <Route exact path='/' >
+              <HomePage />
+
+            </Route>
+            <Route exact path='/watch/:id' >
+              <WatchPage />
+
+            </Route>
+            <Route exact path='/Upload' >
+              <UploadPage />
+
+            </Route>
+            <Route exact path='/SearchPage/:id' >
+              <SearchPage />
+
+            </Route>
+          </Switch>
+          </div>
+          </div>
+        </Router>
+        
+        </div>
+       
+     
+    );
+  }
 }
 
 export default App;
