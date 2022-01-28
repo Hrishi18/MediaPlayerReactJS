@@ -18,6 +18,7 @@ export default class LikedVideoGrid extends Component {
     componentDidMount = () => {
         console.log('test')
         console.log("hi from likedgrid")
+        let userid = ReactSession.get("userId")
         axios.get(`${"https://localhost:44313/api/Like/likeduserwithvideos/"}${userid}`)
             .then((response) => {
                 console.log("videodata")

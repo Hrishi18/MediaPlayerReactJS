@@ -169,21 +169,21 @@ const ResponsiveAppBar = (props) => {
         var { name,email, pass, confirmPass } = document.forms["sign-up-form"];
         if (name.value.trim() == "") {
           
-          setErrorMessages({ name: "error", message: "cannot be empty" });
+          setErrorMessages({ name: "error", message: "name cannot be empty" });
          return
         }
         if (email.value.trim() == "") {
-          setErrorMessages({ name: "error", message: "cannot be empty" });
+          setErrorMessages({ name: "error", message: "email cannot be empty" });
                return
                    }
         
         if(!emailRegex.test(email.value)){
-          setErrorMessages({ name: "error", message: "not valid email" });
+          setErrorMessages({ name: "error", message: "email not valid" });
          return
         }
         if (pass.value.trim() == "") {
           
-          setErrorMessages({ name: "error", message: "cannot be empty" });
+          setErrorMessages({ name: "error", message: "password cannot be empty" });
          return
         }
         if(pass.value.length<=5){
@@ -193,6 +193,7 @@ const ResponsiveAppBar = (props) => {
         else if(pass.value != confirmPass.value)
         {
          setErrorMessages({ name: "error", message: "entered passwords do not match" });
+         return
         }
        
     
@@ -221,15 +222,18 @@ const ResponsiveAppBar = (props) => {
                 console.log("user registered")
                 window.location.reload();
             }
-            if(response.status == 400){
-                console.log("here in else")
-                setErrorMessages({ name: "name", message: "some error occured please try again" });      
             
-            }
-        }).catch((response) => {
+        }).catch((error) => {
           console.log("here in catch")
-          console.log(response.status);
-          setErrorMessages({ name: "name", message: "some error occured please try again" });
+          console.log(error.response.status);
+          if(error.response.status === 409){
+            console.log("here in else")
+            setErrorMessages({ name: "error", message: "Email already exists try to log in" });      
+        
+        }
+        else{
+          setErrorMessages({ name: "error", message: "some error occured please try again" });
+        }
         
             
         });
@@ -284,8 +288,8 @@ const ResponsiveAppBar = (props) => {
             if (response.status == 200) {
                 console.log(response);
                 console.log(response.headers)
-                console.log("name "+response.headers["name"])
-                ReactSession.set("username", response.headers["name"]);
+                console.log("name "+response.headers["uname"])
+                ReactSession.set("username", response.headers["uname"]);
                 ReactSession.set("isSubmitted", true);
                 ReactSession.set("token", response.headers["jwt"])
                 ReactSession.set("userId", response.headers["uid"])
@@ -329,6 +333,8 @@ const ResponsiveAppBar = (props) => {
         setIsSubmitted(false)
         ReactSession.set("username", null);
         ReactSession.set("isSubmitted", false);
+        ReactSession.set("userId", null)
+        ReactSession.set("token", null)
         window.location.reload();
 
     }
@@ -475,7 +481,7 @@ const ResponsiveAppBar = (props) => {
                         </div>
                        
                         <div className="form-group">
-                            <input type="password" name="confirmPass" className="form-control" placeholder="Password" required="" autoComplete="off" aria-required="true" />
+                            <input type="password" name="confirmPass" className="form-control" placeholder="Confirm Password" required="" autoComplete="off" aria-required="true" />
                         </div>
                         {renderErrorMessage("error")}
                         <input className="btn-modal" id="sign_up" type="button" value="Sign Up" type="submit" />
@@ -494,7 +500,7 @@ const ResponsiveAppBar = (props) => {
                     <span className="subtitle">Just fill in the form below</span>
                     <form className="contact-form form-validate4" name='sign-in-form' noValidate="noValidate" onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="username"> Username</label>
+                            <label htmlFor="username"> Email</label>
                             <input className="form-control" type="email" name="uname" placeholder="E-mail" required="" autoComplete="off" aria-required="true" />
 
                         </div>

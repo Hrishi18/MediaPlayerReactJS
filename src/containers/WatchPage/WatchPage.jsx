@@ -10,7 +10,8 @@ import CategoryVideoGrid from '../../components/CategoryVideoGrid/CategoryVideoG
 import { Link } from "react-router-dom";
 import history from '../../components/History/History';
 import "./watch-page.css";
-
+import { ReactSession } from 'react-client-session';
+import Snackbar from '@mui/material/Snackbar';
 
 
 
@@ -24,8 +25,8 @@ class WatchPage extends Component {
             videodata: {},
             commentdata: [],
             commenttext: '',
-
-            userid: 3,
+            openSnack: false,
+            userid: '',
             username: '',
             userdata: {},
             likes: '',
@@ -52,7 +53,7 @@ class WatchPage extends Component {
             .catch((error) => {
                 console.log(error);
             });
-        axios.get(`${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}`)
+        axios.get(`${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}`)
             .then((response) => {
                 console.log("status " + response.data);
 
@@ -90,7 +91,7 @@ class WatchPage extends Component {
                 console.log(error);
             });
 
-        axios.get(`${"https://localhost:44313/api/Users/"}${this.state.userid}`)
+        axios.get(`${"https://localhost:44313/api/Users/"}${ReactSession.get("userId")}`)
             .then((response) => {
                 //console.log("user " + response.data);
 
@@ -135,13 +136,22 @@ class WatchPage extends Component {
         }
 
     }
-
+    handleClick = () => {
+        this.setState({ openSnack: true });
+        console.log(this.state.openSnack)
+    };
+    handleClose = () => {
+        this.setState({ openSnack: false });
+    };
     handleLike = () => {
-
+        if (!ReactSession.get("isSubmitted")) {
+            this.handleClick();
+            return;
+        }
         //like=1 dislike=0
         //like=1 dislike=1
         if (this.state.likedaction === 'liked') {
-            axios.delete(`${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}`)
+            axios.delete(`${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}`)
                 .then((data) => {
                     console.table(data.data)
                     axios.get(`${"https://localhost:44313/api/Like/likescount/"}${this.state.videoid}`)
@@ -165,9 +175,9 @@ class WatchPage extends Component {
         //add like
         else if (this.state.likedaction === '' && this.state.dislikedaction === 'disliked') {
 
-            let url = `${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}/${"true"}`
+            let url = `${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}/${"true"}`
 
-            axios.delete(`${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}`)
+            axios.delete(`${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}`)
                 .then((data) => {
                     console.table(data.data)
                     axios.post(url)
@@ -210,7 +220,7 @@ class WatchPage extends Component {
         }
         //like=0 dislike=0
         else {
-            let url = `${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}/${"true"}`
+            let url = `${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}/${"true"}`
             axios.post(url)
                 .then((data) => {
                     console.table(data.data)
@@ -234,8 +244,12 @@ class WatchPage extends Component {
     }
 
     handleDislike = () => {
+        if (!ReactSession.get("isSubmitted")) {
+            this.handleClick();
+            return;
+        }
         if (this.state.dislikedaction === 'disliked') {
-            axios.delete(`${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}`)
+            axios.delete(`${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}`)
                 .then((data) => {
                     console.table(data.data)
                     axios.get(`${"https://localhost:44313/api/Like/dislikescount/"}${this.state.videoid}`)
@@ -255,9 +269,9 @@ class WatchPage extends Component {
         }
         else if (this.state.likedaction === 'liked' && this.state.dislikedaction === '') {
 
-            let url = `${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}/${"false"}`
+            let url = `${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}/${"false"}`
 
-            axios.delete(`${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}`)
+            axios.delete(`${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}`)
                 .then((data) => {
                     console.table(data.data)
                     axios.post(url)
@@ -299,7 +313,7 @@ class WatchPage extends Component {
 
         }
         else {
-            let url = `${"https://localhost:44313/api/Like/"}${this.state.userid}/${this.state.videoid}/${"false"}`
+            let url = `${"https://localhost:44313/api/Like/"}${ReactSession.get("userId")}/${this.state.videoid}/${"false"}`
             axios.post(url)
                 .then((data) => {
                     console.table(data.data)
@@ -332,7 +346,7 @@ class WatchPage extends Component {
             console.log('Insertion Operation')
 
             //console.table(data)
-            let url = `${"https://localhost:44313/api/Comment/"}${this.state.userid}/${this.state.videoid}/${this.state.commenttext}`
+            let url = `${"https://localhost:44313/api/Comment/"}${ReactSession.get("userId")}/${this.state.videoid}/${this.state.commenttext}`
             console.log("url:" + url)
             axios.post(url)
                 .then((data) => {
@@ -413,7 +427,9 @@ class WatchPage extends Component {
                                                             fontSize={'large'}
                                                             color={this.state.likedaction === 'liked' ? 'success' : 'action'}
                                                             //theme={this.state.likedaction === 'liked' ? 'filled' : 'outlined'}
-                                                            onClick={this.handleLike} />
+                                                            onClick={this.handleLike}
+
+                                                        />
                                                     </Tooltip>
                                                     <span style={{ paddingLeft: '10px', cursor: 'auto', fontFamily: 'Lucida Sans', fontSize: '20px' }}>{this.state.likes}</span>
                                                 </span>&nbsp;&nbsp;
@@ -425,6 +441,7 @@ class WatchPage extends Component {
                                                             color={this.state.dislikedaction === 'disliked' ? 'error' : 'action'}
                                                             //theme={this.state.dislikedaction === 'disliked' ? 'filled' : 'outlined'}
                                                             onClick={this.handleDislike}
+
                                                         />
                                                     </Tooltip>
                                                     <span style={{ paddingLeft: '10px', cursor: 'auto', fontFamily: 'Lucida Sans', fontSize: '20px' }}>{this.state.dislikes}</span>
@@ -486,6 +503,13 @@ class WatchPage extends Component {
 
                         </div>
                     </Grid >
+                    <Snackbar
+                        open={this.state.openSnack}
+                        autoHideDuration={3000}
+                        onClose={this.handleClose}
+                        message="Please Sign-In first"
+
+                    />
                     <Grid item lg={2} xs={12}>
                         <CategoryVideoGrid onVideoClick={this.onVideoClick} videoId={this.state.videoid} />
                     </Grid>

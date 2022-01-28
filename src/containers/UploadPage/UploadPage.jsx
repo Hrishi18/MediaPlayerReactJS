@@ -46,7 +46,7 @@ class UploadPage extends Component {
     };
     selectThumbnailHandler = (event) => {
         //1. define the array for the file type e.g. png, jpeg
-        const fileTypes = ['image/jpeg', 'image/png'];
+        const fileTypes = ['image/jpeg', 'image/png', 'image/jpeg'];
 
         // 2. get the file type
         let file = event.target.files;
@@ -72,22 +72,21 @@ class UploadPage extends Component {
         formData.append('videoFile', this.state.selectedFile);
         formData.append('ThumbnailFile', this.state.selectedThumbnail);
         formData.append('Video.VideoTitle', document.getElementById("title").value);
-        formData.append('Video.VideoId', 1000);
-        formData.append('Video.UserId', 100);
-        formData.append('Video.CategoryId', 1);
+        formData.append('Video.UserId', ReactSession.get("userId"));
+        formData.append('Video.CategoryId', 5);
         formData.append('Video.VideoTag', document.getElementById("tags").value);
         formData.append('Video.VideoDescription', document.getElementById("description").value);
-
+        console.log(ReactSession.get("token"))
         // 2. post the file to the WEB API
         axios({
             method: 'post',
-            url: 'http://localhost:44313/api/videos',
+            url: 'https://localhost:44313/api/Video',
             data: formData,
-            config: {
-                headers: {
-                    'jwt': ReactSession.get("jwt")
-                }
+
+            headers: {
+                'jwt': ReactSession.get("token")
             }
+
         })
             .then((response) => {
                 this.setState({ status: `upload success ${response.data}` });

@@ -27,7 +27,7 @@ export default class SmallSidebar extends Component {
 	};
 	render() {
 		let loginNavigation;
-		if (1) {
+		if (ReactSession.get("isSubmitted")) {
 			loginNavigation = <ul>
 				<li>
 					<Link to='/' className="new_video" style={{ display: "block" }}>
@@ -83,13 +83,14 @@ export default class SmallSidebar extends Component {
 		return (
 
 			<section class="sidebar_small" >
-				<Box position="fixed" sx={{ width: 76, bgcolor: '#EEEEEE', display: { xs: 'none', md: 'flex' } }}>
+				<Box position="fixed" sx={{ width: 76, zIndex: '100', bgcolor: '#EEEEEE', display: { xs: 'none', md: 'flex' } }}>
 					{loginNavigation}
 					<Snackbar
 						open={openSnack}
 						autoHideDuration={3000}
 						onClose={this.handleClose}
 						message="Please Sign-In first"
+
 
 					/>
 				</Box>
