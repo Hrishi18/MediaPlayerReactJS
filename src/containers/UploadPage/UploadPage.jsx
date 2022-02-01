@@ -89,10 +89,10 @@ class UploadPage extends Component {
 
         })
             .then((response) => {
-                this.setState({ status: `upload success ${response.data}` });
+                this.setState({ status: `upload successful` });
             })
             .catch((error) => {
-                this.setState({ status: `upload failed ${error.errMessage}` });
+                this.setState({ status: `upload failed ` });
             })
 
 
